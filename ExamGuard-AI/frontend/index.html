@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ExamGuard AI</title><link rel="stylesheet" href="/static/styles.css"></head>
+<body>
+<div id="toast" class="toast hidden"></div><div id="examAlertBanner" class="exam-alert-banner hidden" role="alert" aria-live="assertive"></div>
+<section id="loginView" class="login-shell">
+  <div class="brand"><span class="logo">EG</span> ExamGuard <b>AI</b></div>
+  <div class="login-card"><span class="eyebrow">AI-ASSISTED EXAM EXPERIENCE</span><h1>Fair exams.<br><span>Thoughtful oversight.</span></h1><p class="muted">A student-first exam workspace with transparent monitoring cues and human review.</p>
+  <form id="loginForm"><label>Email<input id="email" type="email" value="student@examguard.local" required></label><label>Password<input id="password" type="password" value="StudentDemo123!" required></label><button class="btn primary full">Sign in →</button></form>
+  <div class="demo"><button data-demo="student">Use student demo</button><button data-demo="admin">Use admin demo</button></div>
+  <small>Educational demo. Simulated events are not AI predictions or proof of cheating.</small></div>
+  <p class="footnote">Privacy-first prototype · Webcam is opt-in and not recorded</p>
+</section>
+<div id="appView" class="hidden">
+<aside class="sidebar"><div class="brand"><span class="logo">EG</span> ExamGuard <b>AI</b></div><p class="section-label">WORKSPACE</p>
+<nav><button data-page="dashboard" class="nav active">▦ Overview</button><button data-page="exam" class="nav student-only">▤ Take an exam</button><button data-page="sessions" class="nav">◷ Session history</button><button data-page="review" class="nav admin-only hidden">◎ Review events <span id="pendingCount">0</span></button><button data-page="reports" class="nav admin-only hidden">⇩ Reports</button></nav>
+<div class="sidebar-bottom"><div class="privacy"><span></span><div><b>Privacy controls</b><small>Permissions requested before exam</small></div></div><button id="logout" class="nav">↪ Sign out</button></div></aside>
+<main><header class="topbar"><div><small>Workspace / <span id="crumb">Overview</span></small><h2 id="title">Overview</h2></div><div class="user"><span id="avatar">AS</span><div><b id="username">Student</b><small id="role">Student workspace</small></div></div></header>
+<div class="content"><section id="dashboard" class="page"></section><section id="exam" class="page hidden"></section><section id="sessions" class="page hidden"></section><section id="review" class="page hidden"></section><section id="reports" class="page hidden"></section></div><footer>ExamGuard AI · Educational prototype · Review cues require human interpretation</footer></main></div>
+<script src="/static/app.js"></script>
+<script src="./proctoring.js"></script>
+</body></html>

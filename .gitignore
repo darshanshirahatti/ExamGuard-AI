@@ -1,0 +1,5 @@
+.qodo
+.venv
+requirements.txt
+examguard.db
+.env.example

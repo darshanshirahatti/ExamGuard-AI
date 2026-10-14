@@ -3,3 +3,6 @@
 requirements.txt
 examguard.db
 .env.example
+.env
+# Local environment secrets
+ExamGuard-AI/.env

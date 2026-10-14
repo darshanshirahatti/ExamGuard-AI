@@ -477,9 +477,18 @@ def public_user(row):
 
 @app.get("/", response_class=HTMLResponse)
 def home():
-    return (
-        ROOT / "frontend" / "index.html"
-    ).read_text(encoding="utf-8")
+    return (ROOT / "frontend" / "index.html").read_text(encoding="utf-8")
+
+
+# Directly-openable student assessment URLs. Both paths serve the same SPA;
+# the frontend resolves the stable test ID after the student signs in.
+@app.get("/assessment/{test_id}", response_class=HTMLResponse)
+@app.get("/examguard-ai/assessment/{test_id}", response_class=HTMLResponse)
+def assessment_page(test_id: str):
+    clean_id = test_id.strip().upper()
+    if not clean_id or len(clean_id) > 40:
+        raise HTTPException(404, "Assessment link is invalid.")
+    return (ROOT / "frontend" / "index.html").read_text(encoding="utf-8")
 
 
 @app.get("/api/health")
@@ -769,34 +778,51 @@ def get_assessment_share_link(
 ):
     with db() as c:
         exam = c.execute(
-            "SELECT id, title, duration FROM exams WHERE id=?",
+            "SELECT id, test_id, title, duration FROM exams WHERE id=?",
             (exam_id,)
         ).fetchone()
 
     if not exam:
         raise HTTPException(404, "Assessment not found.")
 
-    # Set EXAMGUARD_PUBLIC_URL for a deployed/public application.
-    # Without it, use the current server address.
+    test_id = (exam["test_id"] or f"EXG-{exam['id']:05d}").strip().upper()
+    # Set EXAMGUARD_PUBLIC_URL to the public origin when deployed.
     base_url = (
         os.getenv("EXAMGUARD_PUBLIC_URL", "").strip().rstrip("/")
         or str(request.base_url).rstrip("/")
     )
-
-    share_url = f"{base_url}/?assessment={exam['id']}"
+    share_url = f"{base_url}/examguard-ai/assessment/{test_id}"
 
     return {
         "ok": True,
+        "application_name": "ExamGuard AI",
         "exam_id": exam["id"],
+        "test_id": test_id,
         "title": exam["title"],
         "duration_minutes": exam["duration"],
         "share_url": share_url,
         "message": (
-            f"You are invited to take the assessment: {exam['title']}. "
+            f"ExamGuard AI assessment: {exam['title']} ({test_id}). "
             f"Duration: {exam['duration']} minutes. "
             "Open the link and sign in with your student account."
         )
     }
+
+
+@app.get("/api/assessment/by-test-id/{test_id}")
+def assessment_by_test_id(test_id: str, user=Depends(current_user)):
+    """Resolve a shared test ID after student authentication."""
+    if user["role"] != "student":
+        raise HTTPException(403, "Sign in with a student account to take this assessment.")
+    with db() as c:
+        exam = c.execute(
+            "SELECT id, test_id, title, description, duration AS duration_minutes "
+            "FROM exams WHERE upper(test_id)=upper(?)",
+            (test_id.strip(),)
+        ).fetchone()
+    if not exam:
+        raise HTTPException(404, "This assessment link is invalid or the exam no longer exists.")
+    return dict(exam)
 
 @app.get("/api/admin/exams/{exam_id}/questions")
 def admin_questions(exam_id: int, user=Depends(admin)):

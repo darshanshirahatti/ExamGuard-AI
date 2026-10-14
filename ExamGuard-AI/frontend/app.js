@@ -1263,6 +1263,12 @@ async function shareExam(id) {
           </button>
 
           <a class="btn outline"
+            href="${esc(url)}"
+            target="_blank" rel="noopener noreferrer">
+            Preview assessment
+          </a>
+
+          <a class="btn outline"
             href="${esc(whatsapp)}"
             target="_blank" rel="noopener noreferrer">
             WhatsApp

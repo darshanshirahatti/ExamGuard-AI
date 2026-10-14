@@ -1,8 +1,22 @@
-.qodo
-.venv
-requirements.txt
-examguard.db
-.env.example
+# Secrets and local configuration
 .env
-# Local environment secrets
-ExamGuard-AI/.env
+**/.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local database and runtime files
+*.db
+*.sqlite
+*.sqlite3
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
